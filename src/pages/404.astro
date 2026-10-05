@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { nav } from '../data/site';
+---
+
+<BaseLayout title="Page not found" description="The page you are looking for does not exist." noindex>
+  <section class="section">
+    <div class="container not-found">
+      <p class="eyebrow">Error 404</p>
+      <h1>This page has moved, or it was never built</h1>
+      <p class="lead">Try one of these instead:</p>
+      <ul role="list">
+        <li><a class="btn btn--primary" href="/">Home</a></li>
+        {nav.map((item) => <li><a class="btn btn--ghost" href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: var(--space-m);
+    justify-items: start;
+  }
+
+  .not-found h1 {
+    max-width: 18ch;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-s);
+  }
+</style>

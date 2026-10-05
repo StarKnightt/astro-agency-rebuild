@@ -1,0 +1,147 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArtImage from '../../components/ArtImage.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import ArrowUpRight from '../../icons/arrow-up-right.svg';
+
+export const getStaticPaths = (async () => {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  next: CollectionEntry<'projects'>;
+}
+
+const { project, next } = Astro.props;
+const { Content } = await render(project);
+const service = await getEntry(project.data.service);
+const { title, summary, location, year, area, client, cover, coverAlt } = project.data;
+---
+
+<BaseLayout title={title} description={summary}>
+  <PageHero title={title} lead={summary} crumbs={[{ href: '/work', label: 'Work' }]} />
+
+  <div class="container">
+    <div class="media cover">
+      <ArtImage src={cover} alt={coverAlt} priority sizes="(min-width: 82.5rem) 82.5rem, 100vw" widths={[800, 1200, 1600, 2000]} />
+    </div>
+  </div>
+
+  <section class="section" aria-label="Project details">
+    <div class="container detail">
+      <dl class="facts" data-reveal>
+        <div><dt>Location</dt><dd>{location}</dd></div>
+        <div><dt>Completed</dt><dd>{year}</dd></div>
+        <div><dt>Size</dt><dd>{area}</dd></div>
+        <div><dt>Client</dt><dd>{client}</dd></div>
+        {
+          service && (
+            <div>
+              <dt>Service</dt>
+              <dd>
+                <a class="link-arrow" href={`/services/${service.id}`}>
+                  {service.data.title}
+                  <ArrowUpRight width="16" height="16" aria-hidden="true" />
+                </a>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+      <div class="prose" data-reveal style="--i: 1">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="next-title">
+    <div class="container next">
+      <h2 id="next-title">Next project</h2>
+      <ProjectCard project={next} sizes="(min-width: 56rem) 55vw, 100vw" />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .cover {
+    aspect-ratio: 3 / 2;
+  }
+
+  @media (min-width: 64rem) {
+    .cover {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .detail {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-m) var(--space-l);
+    align-content: start;
+  }
+
+  .facts div {
+    display: grid;
+    gap: 0.2rem;
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .facts dt {
+    color: var(--color-ink-2);
+    font-size: var(--step--1);
+  }
+
+  .facts dd {
+    font-weight: 500;
+  }
+
+  .prose {
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  .next {
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .next h2 {
+    font-size: var(--step-2);
+  }
+
+  @media (min-width: 56rem) {
+    .detail {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(2rem, 5vw, 6rem);
+      align-items: start;
+    }
+
+    .facts {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+
+    .next {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(2rem, 5vw, 6rem);
+      align-items: start;
+    }
+  }
+</style>

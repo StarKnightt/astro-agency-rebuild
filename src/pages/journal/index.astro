@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PostCard from '../../components/PostCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+const posts = (await getCollection('journal', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout title="Journal" description="Notes from the studio on daylight, materials and how we work with sites and clients.">
+  <PageHero
+    title="Journal"
+    lead="Short notes from the studio on daylight, materials and the way we work. Written by the people who draw the buildings."
+  />
+
+  <section class="section journal" aria-label="Articles">
+    <div class="container">
+      {featured && <PostCard post={featured} featured headingLevel="h2" />}
+      {
+        rest.length > 0 && (
+          <ul class="journal__grid" role="list">
+            {rest.map((post, i) => (
+              <li data-reveal style={`--i: ${i}`}>
+                <PostCard post={post} headingLevel="h2" />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .journal {
+    padding-top: 0;
+  }
+
+  .journal__grid {
+    display: grid;
+    gap: var(--space-2xl) clamp(1.5rem, 4vw, 4rem);
+    margin-top: clamp(3.5rem, 2rem + 4vw, 6rem);
+    padding-top: clamp(3.5rem, 2rem + 4vw, 6rem);
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 48rem) {
+    .journal__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

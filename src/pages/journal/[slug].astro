@@ -1,0 +1,149 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArtImage from '../../components/ArtImage.astro';
+import PostCard from '../../components/PostCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { formatDate, readingTime } from '../../lib/format';
+import { cleanPath } from '../../lib/paths';
+import { site } from '../../data/site';
+
+export const getStaticPaths = (async () => {
+  const posts = (await getCollection('journal', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, others: posts.filter((other) => other.id !== post.id).slice(0, 2) },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: CollectionEntry<'journal'>;
+  others: CollectionEntry<'journal'>[];
+}
+
+const { post, others } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, author, cover, coverAlt, tags } = post.data;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  author: { '@type': 'Person', name: author },
+  publisher: { '@type': 'Organization', name: site.name },
+  image: new URL('/og.jpg', Astro.site).href,
+  mainEntityOfPage: new URL(cleanPath(Astro.url.pathname), Astro.site).href,
+};
+---
+
+<BaseLayout title={title} description={description} type="article" jsonLd={jsonLd}>
+  <article>
+    <header class="container post-header">
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb" role="list">
+          <li><a href="/journal">Journal</a></li>
+          <li aria-current="page">{title}</li>
+        </ol>
+      </nav>
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+      <p class="post-meta">
+        <span>By {author}</span>
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        <span>{readingTime(post.body)}</span>
+        {tags.length > 0 && <span>{tags.join(', ')}</span>}
+      </p>
+    </header>
+
+    <div class="container">
+      <div class="media cover">
+        <ArtImage src={cover} alt={coverAlt} priority sizes="(min-width: 82.5rem) 82.5rem, 100vw" widths={[800, 1200, 1600, 2000]} />
+      </div>
+    </div>
+
+    <div class="container post-body">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  {
+    others.length > 0 && (
+      <section class="section more" aria-labelledby="more-title">
+        <div class="container">
+          <div class="section-head">
+            <h2 id="more-title">More from the journal</h2>
+          </div>
+          <ul class="more__grid" role="list">
+            {others.map((other) => (
+              <li>
+                <PostCard post={other} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .post-header {
+    display: grid;
+    gap: var(--space-m);
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 6rem) clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  }
+
+  .post-header .breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .post-header h1 {
+    max-width: 20ch;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+    color: var(--color-ink-2);
+    font-size: var(--step--1);
+  }
+
+  .cover {
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-body {
+    display: grid;
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .prose {
+    justify-self: center;
+    width: 100%;
+  }
+
+  .more {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .more__grid {
+    display: grid;
+    gap: var(--space-2xl) clamp(1.5rem, 4vw, 4rem);
+  }
+
+  @media (min-width: 48rem) {
+    .more__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

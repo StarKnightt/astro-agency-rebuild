@@ -1,0 +1,68 @@
+---
+import { process } from '../data/site';
+---
+
+<section class="section" aria-labelledby="process-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="process-title">How a project runs</h2>
+    </div>
+    <ol class="steps" role="list">
+      {
+        process.map((step, i) => (
+          <li data-reveal style={`--i: ${i}`}>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    display: grid;
+    gap: var(--space-l);
+    counter-reset: step;
+  }
+
+  .steps li {
+    position: relative;
+    display: grid;
+    gap: var(--space-xs);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .steps li::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 2.5rem;
+    height: 3px;
+    background: var(--color-pine);
+  }
+
+  h3 {
+    font-size: var(--step-2);
+  }
+
+  p {
+    max-width: 30ch;
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 40rem) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

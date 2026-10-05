@@ -1,0 +1,113 @@
+---
+import ArrowLeft from '../icons/arrow-left.svg';
+import ArrowRight from '../icons/arrow-right.svg';
+import { testimonials } from '../data/site';
+---
+
+<section class="section testimonials" aria-labelledby="testimonials-title" data-carousel>
+  <div class="container section-head">
+    <h2 id="testimonials-title">Clients on working with us</h2>
+    <div class="controls">
+      <button class="icon-btn" type="button" data-carousel-prev aria-controls="testimonial-track">
+        <ArrowLeft width="20" height="20" aria-hidden="true" />
+        <span class="visually-hidden">Previous testimonial</span>
+      </button>
+      <button class="icon-btn" type="button" data-carousel-next aria-controls="testimonial-track">
+        <ArrowRight width="20" height="20" aria-hidden="true" />
+        <span class="visually-hidden">Next testimonial</span>
+      </button>
+    </div>
+  </div>
+  <div class="track" id="testimonial-track" data-carousel-track tabindex="0" role="region" aria-label="Testimonials">
+    <ul role="list">
+      {
+        testimonials.map((item, i) => (
+          <li data-carousel-item data-reveal style={`--i: ${i}`}>
+            <figure>
+              <blockquote>
+                <p>“{item.quote}”</p>
+              </blockquote>
+              <figcaption>
+                <span class="name">{item.name}</span>
+                <span class="role">{item.role}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/carousel';
+</script>
+
+<style>
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .track {
+    --inset: max(var(--gutter), (100% - var(--container)) / 2);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--inset);
+    scrollbar-width: none;
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .track:focus-visible {
+    outline-offset: -4px;
+  }
+
+  ul {
+    display: flex;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    width: max-content;
+    padding-inline: var(--inset);
+  }
+
+  li {
+    display: flex;
+    width: min(32rem, calc(100vw - 2 * var(--gutter) - 2rem));
+    scroll-snap-align: start;
+  }
+
+  figure {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-2xl);
+    width: 100%;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    background: var(--color-paper-2);
+  }
+
+  blockquote p {
+    font-size: var(--step-1);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+
+  figcaption {
+    display: grid;
+    gap: 0.15rem;
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--color-line);
+    font-size: 0.9375rem;
+  }
+
+  .name {
+    font-weight: 600;
+  }
+
+  .role {
+    color: var(--color-ink-2);
+  }
+</style>

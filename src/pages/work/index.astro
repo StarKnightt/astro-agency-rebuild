@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Work"
+  description="Selected houses, cabins, public buildings and renovations by Lysning Arkitekter, from the Oslofjord to Lofoten."
+>
+  <PageHero
+    title="Selected work"
+    lead="Houses, cabins, a library and a boathouse. Small and mid-sized buildings where every detail had to work in a northern climate."
+  />
+
+  <section class="section work-section" aria-label="Projects">
+    <div class="container">
+      <ProjectGrid projects={projects} headingLevel="h2" />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .work-section {
+    padding-top: 0;
+  }
+</style>

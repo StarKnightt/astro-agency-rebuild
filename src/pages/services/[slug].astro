@@ -1,0 +1,119 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArtImage from '../../components/ArtImage.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import ProcessSteps from '../../components/ProcessSteps.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+export const getStaticPaths = (async () => {
+  const services = await getCollection('services');
+  return services.map((service) => ({ params: { slug: service.id }, props: { service } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  service: CollectionEntry<'services'>;
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const related = (await getCollection('projects', (project) => project.data.service.id === service.id)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const { title, summary, cover, coverAlt, deliverables, faqs } = service.data;
+---
+
+<BaseLayout title={title} description={summary}>
+  <PageHero title={title} lead={summary} crumbs={[{ href: '/services', label: 'Services' }]} />
+
+  <div class="container">
+    <div class="media cover">
+      <ArtImage src={cover} alt={coverAlt} priority sizes="(min-width: 82.5rem) 82.5rem, 100vw" widths={[800, 1200, 1600, 2000]} />
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="included-title">
+    <div class="container detail">
+      <aside class="included" data-reveal>
+        <h2 id="included-title">What is included</h2>
+        <ul role="list">
+          {deliverables.map((item) => <li>{item}</li>)}
+        </ul>
+      </aside>
+      <div class="prose" data-reveal style="--i: 1">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  {
+    related.length > 0 && (
+      <section class="section" aria-labelledby="related-title">
+        <div class="container">
+          <div class="section-head">
+            <h2 id="related-title">Recent projects</h2>
+          </div>
+          <ProjectGrid projects={related} />
+        </div>
+      </section>
+    )
+  }
+
+  <ProcessSteps />
+
+  {faqs.length > 0 && <Faq items={faqs} />}
+
+  <CtaBand title={`Thinking about ${title.toLowerCase()}?`} />
+</BaseLayout>
+
+<style>
+  .cover {
+    aspect-ratio: 21 / 9;
+  }
+
+  @media (max-width: 47.99rem) {
+    .cover {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .detail {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .included h2 {
+    margin-bottom: var(--space-m);
+    font-size: var(--step-2);
+  }
+
+  .included ul {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .included li {
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .prose {
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  @media (min-width: 56rem) {
+    .detail {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(2rem, 5vw, 6rem);
+      align-items: start;
+    }
+
+    .included {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

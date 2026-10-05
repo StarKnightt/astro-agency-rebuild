@@ -1,0 +1,37 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<a href="/" class:list={['logo', className]} aria-label={`${site.name}, home`}>
+  <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+    <path d="M7 20.5a9 9 0 0 1 18 0z" fill="currentColor"></path>
+    <rect x="5" y="23" width="22" height="2.2" fill="currentColor"></rect>
+  </svg>
+  <span>{site.shortName}</span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+
+  .logo svg {
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .logo:hover svg {
+    transform: translateY(-2px);
+  }
+</style>

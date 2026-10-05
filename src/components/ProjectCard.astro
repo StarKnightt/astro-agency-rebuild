@@ -1,0 +1,88 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArtImage from './ArtImage.astro';
+import ArrowUpRight from '../icons/arrow-up-right.svg';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  sizes?: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { project, sizes = '(min-width: 48rem) 45vw, 100vw', headingLevel: Heading = 'h3' } = Astro.props;
+const { title, location, year, cover, coverAlt } = project.data;
+---
+
+<article class="project-card">
+  <a href={`/work/${project.id}`} class="project-card__link">
+    <div class="project-card__media media">
+      <ArtImage src={cover} alt={coverAlt} sizes={sizes} />
+    </div>
+    <div class="project-card__meta">
+      <Heading class="project-card__title">{title}</Heading>
+      <ArrowUpRight width="20" height="20" aria-hidden="true" />
+    </div>
+    <p class="project-card__info">{location}, {year}</p>
+  </a>
+</article>
+
+<style>
+  .project-card__link {
+    display: grid;
+    gap: 0.25rem;
+    text-decoration: none;
+  }
+
+  .project-card__media {
+    aspect-ratio: 3 / 2;
+    margin-bottom: var(--space-s);
+  }
+
+  .project-card__media :global(img) {
+    transition: transform 1.4s var(--ease-out);
+  }
+
+  .project-card__link:hover .project-card__media :global(img),
+  .project-card__link:focus-visible .project-card__media :global(img) {
+    transform: scale(1.045);
+  }
+
+  .project-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+
+  .project-card__title {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+  }
+
+  .project-card__meta svg {
+    flex: none;
+    opacity: 0;
+    transform: translate(-6px, 6px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.5s var(--ease-out);
+  }
+
+  .project-card__link:hover .project-card__meta svg,
+  .project-card__link:focus-visible .project-card__meta svg {
+    opacity: 1;
+    transform: none;
+  }
+
+  .project-card__info {
+    color: var(--color-ink-2);
+    font-size: 0.9375rem;
+  }
+
+  @media (hover: none) {
+    .project-card__meta svg {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+import ArrowRight from '../icons/arrow-right.svg';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = 'Planning a house, a cabin or a public building?',
+  text = 'Tell us about the site and what you need. We reply within two working days.',
+} = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="container cta__inner" data-reveal>
+    <h2 id="cta-title">{title}</h2>
+    <div class="cta__side">
+      <p>{text}</p>
+      <a class="btn btn--light" href="/contact">
+        Start a project
+        <ArrowRight width="18" height="18" aria-hidden="true" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    --focus-color: var(--color-on-night);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(4rem, 3rem + 5vw, 7.5rem) 0;
+    background:
+      radial-gradient(60rem 30rem at 85% 0%, rgb(31 74 61 / 0.55), transparent 70%),
+      var(--color-night);
+    color: var(--color-on-night);
+  }
+
+  .cta__inner {
+    display: grid;
+    gap: var(--space-l);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-night-line);
+  }
+
+  @media (min-width: 56rem) {
+    .cta__inner {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      align-items: end;
+      gap: var(--space-2xl);
+    }
+  }
+
+  h2 {
+    max-width: 18ch;
+    font-size: var(--step-4);
+    letter-spacing: -0.04em;
+  }
+
+  .cta__side {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-m);
+  }
+
+  .cta__side p {
+    max-width: 34ch;
+    color: var(--color-on-night-2);
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArtImage from './ArtImage.astro';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  post: CollectionEntry<'journal'>;
+  featured?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { post, featured = false, headingLevel: Heading = 'h3' } = Astro.props;
+const { title, description, pubDate, cover, coverAlt, tags } = post.data;
+---
+
+<article class:list={['post-card', { 'post-card--featured': featured }]}>
+  <a href={`/journal/${post.id}`} class="post-card__link">
+    <div class="post-card__media media">
+      <ArtImage src={cover} alt={coverAlt} sizes={featured ? '(min-width: 56rem) 55vw, 100vw' : '(min-width: 48rem) 45vw, 100vw'} />
+    </div>
+    <div class="post-card__body">
+      <p class="post-card__meta">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {tags[0] && <span>{tags[0]}</span>}
+      </p>
+      <Heading class="post-card__title">{title}</Heading>
+      <p class="post-card__excerpt">{description}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .post-card__link {
+    display: grid;
+    gap: var(--space-m);
+    text-decoration: none;
+  }
+
+  .post-card__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .post-card__media :global(img) {
+    transition: transform 1.4s var(--ease-out);
+  }
+
+  .post-card__link:hover .post-card__media :global(img) {
+    transform: scale(1.04);
+  }
+
+  .post-card__body {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+
+  .post-card__meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--color-ink-2);
+    font-size: var(--step--1);
+  }
+
+  .post-card__title {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.5s var(--ease-out);
+  }
+
+  .post-card__link:hover .post-card__title {
+    background-size: 100% 1px;
+  }
+
+  .post-card__excerpt {
+    max-width: 52ch;
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 56rem) {
+    .post-card--featured .post-card__link {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: clamp(2rem, 4vw, 4.5rem);
+    }
+
+    .post-card--featured .post-card__title {
+      font-size: var(--step-3);
+      letter-spacing: -0.035em;
+    }
+  }
+</style>

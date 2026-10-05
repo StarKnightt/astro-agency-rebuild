@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs?: { href: string; label: string }[];
+}
+
+const { title, lead, crumbs } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="container">
+    {
+      crumbs && (
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb" role="list">
+            {crumbs.map((crumb) => (
+              <li>
+                <a href={crumb.href}>{crumb.label}</a>
+              </li>
+            ))}
+            <li aria-current="page">{title}</li>
+          </ol>
+        </nav>
+      )
+    }
+    <div class="page-hero__grid">
+      <h1>{title}</h1>
+      {lead && <p class="lead">{lead}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 6rem) clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .page-hero__grid {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  h1 {
+    max-width: 16ch;
+  }
+
+  @media (min-width: 56rem) {
+    .page-hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: end;
+      gap: var(--space-2xl);
+    }
+
+    .lead {
+      padding-bottom: 0.4rem;
+    }
+  }
+</style>

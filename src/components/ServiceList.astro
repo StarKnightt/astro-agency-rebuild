@@ -1,0 +1,161 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArtImage from './ArtImage.astro';
+import ArrowUpRight from '../icons/arrow-up-right.svg';
+
+interface Props {
+  services: CollectionEntry<'services'>[];
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { services, headingLevel: Heading = 'h3' } = Astro.props;
+---
+
+<div class="services">
+  <ul class="services__list" role="list">
+    {
+      services.map((service, i) => (
+        <li class="services__item" data-reveal style={`--i: ${i}`}>
+          <a class="services__link" href={`/services/${service.id}`}>
+            <div class="services__thumb media">
+              <ArtImage src={service.data.cover} alt="" sizes="100vw" widths={[480, 800, 1200]} />
+            </div>
+            <div class="services__text">
+              <Heading class="services__title">{service.data.title}</Heading>
+              <p>{service.data.summary}</p>
+            </div>
+            <span class="services__arrow" aria-hidden="true">
+              <ArrowUpRight width="22" height="22" />
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="services__preview" aria-hidden="true">
+    {
+      services.map((service) => (
+        <div class="services__frame media">
+          <ArtImage src={service.data.cover} alt="" sizes="38vw" widths={[480, 800, 1200]} />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .services {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .services__list {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .services__item {
+    border-bottom: 1px solid var(--color-line);
+    transition: opacity 0.4s ease;
+  }
+
+  .services__link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-m) var(--space-l);
+    padding-block: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    text-decoration: none;
+  }
+
+  .services__thumb {
+    grid-column: 1 / -1;
+    aspect-ratio: 3 / 2;
+  }
+
+  .services__text {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .services__title {
+    font-size: var(--step-3);
+    letter-spacing: -0.035em;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .services__text p {
+    max-width: 44ch;
+    color: var(--color-ink-2);
+  }
+
+  .services__arrow {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-pill);
+    transition:
+      transform 0.5s var(--ease-out),
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .services__link:hover .services__arrow,
+  .services__link:focus-visible .services__arrow {
+    border-color: var(--color-pine);
+    background: var(--color-pine);
+    color: var(--color-paper);
+    transform: rotate(45deg);
+  }
+
+  .services__preview {
+    display: none;
+  }
+
+  @media (min-width: 56rem) {
+    .services {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: start;
+      gap: clamp(2rem, 5vw, 6rem);
+    }
+
+    .services__thumb {
+      display: none;
+    }
+
+    .services__link:hover .services__title,
+    .services__link:focus-visible .services__title {
+      transform: translateX(0.75rem);
+    }
+
+    .services__list:has(.services__link:hover) .services__item:not(:hover) {
+      opacity: 0.45;
+    }
+
+    .services__preview {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      display: grid;
+      aspect-ratio: 4 / 5;
+    }
+
+    .services__frame {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: scale(1.04);
+      transition:
+        opacity 0.6s ease,
+        transform 1.2s var(--ease-out);
+    }
+
+    .services:not(:has(.services__link:is(:hover, :focus-visible))) .services__frame:nth-child(1),
+    .services:has(.services__item:nth-child(1) .services__link:is(:hover, :focus-visible)) .services__frame:nth-child(1),
+    .services:has(.services__item:nth-child(2) .services__link:is(:hover, :focus-visible)) .services__frame:nth-child(2),
+    .services:has(.services__item:nth-child(3) .services__link:is(:hover, :focus-visible)) .services__frame:nth-child(3),
+    .services:has(.services__item:nth-child(4) .services__link:is(:hover, :focus-visible)) .services__frame:nth-child(4) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

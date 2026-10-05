@@ -1,0 +1,36 @@
+{
+  "name": "astro-agency-rebuild",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "art": "node scripts/generate-art.mjs",
+    "test": "playwright test",
+    "screenshots": "node scripts/screenshots.mjs",
+    "deploy": "astro build && wrangler deploy",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.3.3",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5",
+    "wrangler": "^4.147.0"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.63.0",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3"
+  },
+  "description": "Astro demo: a Webflow-style small business site rebuilt in Astro and deployed to Cloudflare Workers",
+  "private": true
+}

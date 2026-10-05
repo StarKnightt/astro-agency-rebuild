@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Message received" description="Thank you for getting in touch with Lysning Arkitekter." noindex>
+  <section class="section">
+    <div class="container thanks">
+      <h1>Thank you. Your message is with us.</h1>
+      <p class="lead">One of the partners will read it and reply within two working days.</p>
+      <p class="muted">
+        This is a demo site. Unless a Resend API key is configured, messages are validated and logged on the server but
+        not emailed.
+      </p>
+      <a class="btn btn--ghost" href="/">Back to the home page</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .thanks {
+    display: grid;
+    gap: var(--space-m);
+    justify-items: start;
+  }
+
+  .thanks h1 {
+    max-width: 18ch;
+  }
+
+  .thanks .muted {
+    max-width: 52ch;
+  }
+</style>

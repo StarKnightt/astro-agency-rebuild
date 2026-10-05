@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://astro-agency-rebuild.prasenjitt4e.workers.dev/sitemap-index.xml

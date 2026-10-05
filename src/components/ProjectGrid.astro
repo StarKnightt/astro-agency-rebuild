@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  stagger?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { projects, stagger = true, headingLevel = 'h3' } = Astro.props;
+---
+
+<ul class:list={['project-grid', { 'project-grid--stagger': stagger && projects.length > 1 }]} role="list">
+  {
+    projects.map((project, i) => (
+      <li data-reveal style={`--i: ${i % 2}`}>
+        <ProjectCard project={project} headingLevel={headingLevel} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .project-grid {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  @media (min-width: 48rem) {
+    .project-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(3.5rem, 2rem + 4vw, 6rem) clamp(1.5rem, 4vw, 4rem);
+    }
+
+    .project-grid--stagger > li:nth-child(even) {
+      margin-top: clamp(4rem, 2rem + 6vw, 9rem);
+    }
+  }
+</style>

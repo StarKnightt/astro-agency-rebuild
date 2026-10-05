@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ArtImage from '../components/ArtImage.astro';
+import CtaBand from '../components/CtaBand.astro';
+import materials from '../assets/art/about-materials.jpg';
+import { principles, site, stats, team } from '../data/site';
+---
+
+<BaseLayout
+  title="Studio"
+  description="Lysning Arkitekter is a studio of fourteen architects, landscape architects and interior architects in Oslo, working across Norway since 2011."
+>
+  <PageHero
+    title="A studio built around daylight"
+    lead={`${site.name} was founded in Oslo in ${site.founded}. Today we are fourteen architects, landscape architects and interior architects working across Norway.`}
+  />
+
+  <div class="container">
+    <div class="media wide" data-reveal>
+      <ArtImage
+        src={materials}
+        alt="Illustration of material samples on a table: a grey stone slab, a timber block, a green wool felt swatch, a slate tile and a glass pane."
+        sizes="(min-width: 82.5rem) 82.5rem, 100vw"
+        widths={[800, 1200, 1600, 2000]}
+      />
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="principles-title">
+    <div class="container principles">
+      <h2 id="principles-title">What we believe</h2>
+      <ul role="list">
+        {
+          principles.map((item, i) => (
+            <li data-reveal style={`--i: ${i}`}>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section stats-section" aria-label="The studio in numbers">
+    <div class="container">
+      <dl class="stats">
+        {
+          stats.map((item, i) => (
+            <div data-reveal style={`--i: ${i}`}>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="team-title">
+    <div class="container team">
+      <div class="team__intro">
+        <h2 id="team-title">The people</h2>
+        <p class="muted">A selection of the people who answer the phone, draw the details and visit the sites.</p>
+      </div>
+      <ul role="list" class="team__list">
+        {
+          team.map((person, i) => (
+            <li data-reveal style={`--i: ${i % 3}`}>
+              <span class="team__name">{person.name}</span>
+              <span class="team__role">{person.role}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .wide {
+    aspect-ratio: 16 / 9;
+  }
+
+  .principles {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .principles ul {
+    display: grid;
+    gap: var(--space-xl) var(--space-l);
+  }
+
+  .principles li {
+    display: grid;
+    gap: var(--space-xs);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .principles h3 {
+    font-size: var(--step-2);
+  }
+
+  .principles p {
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 56rem) {
+    .principles {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: clamp(2rem, 5vw, 6rem);
+    }
+
+    .principles ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .principles li:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .principles li:first-child p {
+      max-width: 48ch;
+      font-size: var(--step-1);
+    }
+  }
+
+  .stats {
+    display: grid;
+    gap: var(--space-l);
+    padding-block: var(--space-xl);
+    border-block: 1px solid var(--color-line);
+  }
+
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+  }
+
+  .stats dd {
+    font-size: var(--step-5);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--color-pine);
+  }
+
+  .stats dt {
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 40rem) {
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .team {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .team__intro {
+    display: grid;
+    gap: var(--space-s);
+    align-content: start;
+  }
+
+  .team__intro p {
+    max-width: 36ch;
+  }
+
+  .team__list {
+    display: grid;
+    gap: 0 var(--space-l);
+  }
+
+  .team__list li {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .team__name {
+    font-size: var(--step-1);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .team__role {
+    color: var(--color-ink-2);
+    font-size: 0.9375rem;
+  }
+
+  @media (min-width: 40rem) {
+    .team__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .team {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: clamp(2rem, 5vw, 6rem);
+    }
+
+    .team__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

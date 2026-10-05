@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ServiceList from '../../components/ServiceList.astro';
+import ProcessSteps from '../../components/ProcessSteps.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Services"
+  description="Architecture, landscape and interior services for homes, cabins, public buildings and renovations across Norway."
+>
+  <PageHero
+    title="Services"
+    lead="From a first site visit to the day you get the keys. We take on a small number of projects at a time so the partners stay close to every one."
+  />
+
+  <section class="section services-section" aria-label="Our services">
+    <div class="container">
+      <ServiceList services={services} headingLevel="h2" />
+    </div>
+  </section>
+
+  <ProcessSteps />
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .services-section {
+    padding-top: 0;
+  }
+</style>

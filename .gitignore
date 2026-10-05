@@ -1,0 +1,29 @@
+# build output
+dist/
+
+# generated types
+.astro/
+worker-configuration.d.ts
+
+# dependencies
+node_modules/
+
+# wrangler and local secrets
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+
+# test output
+test-results/
+playwright-report/
+blob-report/
+
+# logs
+npm-debug.log*
+
+# os and editors
+.DS_Store
+.idea/

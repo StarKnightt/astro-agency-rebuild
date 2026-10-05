@@ -1,0 +1,111 @@
+---
+import Logo from './Logo.astro';
+import { getCollection } from 'astro:content';
+import { nav, site } from '../data/site';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo />
+        <p>{site.tagline}. Homes, cabins and public buildings in timber and stone.</p>
+      </div>
+      <nav aria-label="Footer">
+        <h2>Studio</h2>
+        <ul role="list">
+          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Services</h2>
+        <ul role="list">
+          {services.map((service) => <li><a href={`/services/${service.id}`}>{service.data.title}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul role="list">
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li>{site.city}</li>
+          <li>{site.hours}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__base">
+      <p>© {year} {site.name}. A fictional studio.</p>
+      <p>
+        Demo site built in Astro by {site.author}. <a href={site.repo}>View the source</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    --focus-color: var(--color-on-night);
+    padding-block: var(--space-2xl) var(--space-l);
+    background: var(--color-night);
+    color: var(--color-on-night);
+    font-size: 0.9375rem;
+  }
+
+  .footer__grid {
+    display: grid;
+    gap: var(--space-xl) var(--space-l);
+    padding-bottom: var(--space-2xl);
+  }
+
+  @media (min-width: 48rem) {
+    .footer__grid {
+      grid-template-columns: 1.6fr repeat(3, 1fr);
+    }
+  }
+
+  .footer__brand p {
+    max-width: 30ch;
+    margin-top: var(--space-s);
+    color: var(--color-on-night-2);
+  }
+
+  h2 {
+    margin-bottom: var(--space-s);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-on-night-2);
+  }
+
+  ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--color-night-line);
+    color: var(--color-on-night-2);
+    font-size: var(--step--1);
+  }
+
+  .footer__base a {
+    color: var(--color-on-night);
+    text-decoration: underline;
+  }
+</style>
